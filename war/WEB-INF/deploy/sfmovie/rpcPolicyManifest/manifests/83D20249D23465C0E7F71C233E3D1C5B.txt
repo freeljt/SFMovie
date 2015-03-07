@@ -1,0 +1,2 @@
+serviceClass: com.uber.gwt.sfmovie.client.GreetingService
+path: A6720C1C0B069FFF0EB53C374C93A6D9.gwt.rpc
