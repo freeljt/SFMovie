@@ -1,13 +1,25 @@
 /** Add css rules here for your application. */
-
-
-/** Example rules used by the template application (remove for your app) */
 h1 {
   font-size: 2em;
   font-weight: bold;
   color: #777777;
   margin: 40px 0px 70px;
   text-align: center;
+}
+h4 {
+  font-size: 1em;
+  font-weight: bold;
+  color: #3F4F54;
+  text-align: center;
+}
+h5 {
+  font-size: 1em;
+  color: #505553;
+  text-align: center;
+}
+.center {
+	margin-left: auto;
+    margin-right: auto;
 }
 
 .sendButton {
@@ -36,4 +48,8 @@ h1 {
 	position: relative;
 	top: 100px;
 	left:100px;
+}
+
+.TableKey {
+  font-weight: bold;
 }
