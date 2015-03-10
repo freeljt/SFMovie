@@ -25,11 +25,44 @@ public class MovieLocation extends JavaScriptObject {
 	  public final native String getActor1()  /*-{ return this.actor_1;  }-*/; 
 	  public final native String getActor2()  /*-{ return this.actor_2;  }-*/;
 	  public final native String getActor3()  /*-{ return this.actor_3;  }-*/;
-	  public final ArrayList<String> getActors() {
-		  ArrayList<String> res = new ArrayList<String>();
-		  if(this.getActor1()!=null) res.add(this.getActor1());
-		  if(this.getActor2()!=null) res.add(this.getActor2());
-		  if(this.getActor3()!=null) res.add(this.getActor3());
+	  public final String getActors() {
+		  String res = "N/A";
+		  if(this.getActor1()!=null) res=this.getActor1();
+		  if(this.getActor2()!=null) res+=","+this.getActor2();
+		  if(this.getActor3()!=null) res+=","+this.getActor3();
 		  return res;
 	  }
+	  public final ArrayList<String> getActorList() {
+		  ArrayList<String> list = new ArrayList<String>();
+		  if(this.getActor1()!=null) list.add(this.getActor1());
+		  if(this.getActor2()!=null) list.add(this.getActor2());
+		  if(this.getActor3()!=null) list.add(this.getActor3());
+		  return list;
+	  }
+	  public final String getFunFact() {
+		  if(this.getFunFacts()==null) return "N/A";
+		  else return this.getFunFacts();
+	  }
+	  //Output the proper format of address for geocoder to translate 
+	public final String getAddress() {
+		if(this.getLocation()!=null) {
+			String s = this.getLocation().replaceAll("\\(", ",");
+			//s = s.replaceAll(" ", "+");
+			s = s.replaceAll("\\)", "");
+			s = s.replaceAll("\\&", "at");
+			String[] array = s.split(",");
+			if(array.length>1) {
+				for(int i =0; i< array.length; i++) {
+					if(array[i].matches("\\d")) {
+						return array[i];
+					}
+					if(array[i].contains(" at ")) {
+						return array[i];
+					}
+				}
+			} 
+			return s;
+		}
+		return null;
+	}
 }
