@@ -33,4 +33,5 @@ Trade-offs
 Created By Juntao Li
 --------------------
 [Resume Link](https://drive.google.com/file/d/0B6JeZFJab_deX3k2Tk4ya1hVZWM/view?usp=sharing)
+
 [Linkedin Link](https://www.linkedin.com/profile/view?id=98496805&trk=nav_responsive_tab_profile)
