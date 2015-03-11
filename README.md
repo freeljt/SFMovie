@@ -26,7 +26,7 @@ This solution is mainly focused on front-end. To accomplish the key points of th
 Trade-offs
 ----------
 * The application used a repeating scheduled timer on the client side send geocoder requests second by second due to the limit of this service, which affects the performance of initializing the markers on the map and makes user wait for the loading when first accessing the web app. Given more time, some back-end code will be written to cache all the data on the server-side or store them in a MySQL database
-* Will develop the automated tests for the app using gwt-test-utils framework if given more time
+* Will develop the automated tests for the app using gwt-test-utils framework and arrange the app layout more pleasing if given more time
 * Tried using Backbone.js to write the front-end code but found it hard to learn it and implement the web service in one week. So a more familiar GWT is used in stead. Yet, some studies online indicates Backbone.js is indeed a good & easy-to-use JS framework
 * Only movie details are currently displayed when clicking the pin in the map. With additional time, other info like street view of that pin and movie poster can be added in the display
 
