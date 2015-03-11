@@ -324,19 +324,20 @@ public class SFMovie implements EntryPoint {
 		/**
 		 * Arrange the layout of all the widgets in the web app
 		 */
-	    Grid grid = new Grid(2,3);
-	    grid.setWidget(0, 0, filterBox);
-	    grid.setWidget(0, 1, filterButton);
-	    grid.setWidget(0, 2, displayAllButton);
-	    grid.setWidget(1, 0, resultPanel);
+	    Grid grid = new Grid(3,3);
+	    grid.setWidget(0, 0, new HTML("<h4>View Filter of movie title, director, release year and..."));
+	    grid.setWidget(1, 0, filterBox);
+	    grid.setWidget(1, 1, filterButton);
+	    grid.setWidget(1, 2, displayAllButton);
+	    grid.setWidget(2, 0, resultPanel);
+	    filterBox.setWidth("300px");
 	    grid.addStyleName("center");
 	    HTML foot = new HTML("<h4>Created by <a style='text-decoration:none;' href='mailto:juntaolee515@gmail.com'>Juntao Li</a>");
 	    DockLayoutPanel appLayout = new DockLayoutPanel(Unit.PCT);
 	    appLayout.addNorth(new HTML("<h1>SF Movie Shoot Locations</h1>"),15);
-	    appLayout.addNorth(new HTML("<h4>View Filter of movie title, director, writer, actor(actress) or release year"),5);
-	    appLayout.addNorth(grid,12);
+	    appLayout.addNorth(grid,20);
 	    appLayout.addSouth(foot,5);
-	    appLayout.addWest(detail, 50);
+	    appLayout.addWest(detail, 40);
 	    appLayout.add(widg);
 	    resultPanel.add(new HTML("<h5>Loading the movie locations in the map......"));
 		RootLayoutPanel.get().add(appLayout);	
