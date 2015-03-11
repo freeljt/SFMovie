@@ -68,7 +68,7 @@ public class SFMovie implements EntryPoint {
 	CellTable<movieAttribute> movieAttrTable = new CellTable<movieAttribute>();
 	HashMap<Marker, List<movieAttribute>> movieAttrMap = new HashMap<Marker, List<movieAttribute>>();
 	/**
-	 * This method parse the json text 
+	 * This method parse the json text and build a array of MovieLocation js object
 	 */
 	public static final native JsArray<MovieLocation> buildMLArray(String json) /*-{      
     return eval('(' + json + ')');
@@ -107,9 +107,8 @@ public class SFMovie implements EntryPoint {
 	/**
 	 * This method retrieves data from DataSF and put all of the movie locations  
 	 * in the map
-	 * @param theMap 
 	 */
-	private void collectMovieLoactions(final GoogleMap theMap) {
+	private void collectMovieLoactions() {
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, URL.encode(JSON_URL+APP_Token));
 		try {
 		  Request request = builder.sendRequest(null, new RequestCallback() {
@@ -126,7 +125,7 @@ public class SFMovie implements EntryPoint {
 						//System.out.println("Added "+toBeTranslated.get(i).getAddress());
 					}
 					System.out.println(toBeTranslated.size()+" positions in total");
-					timerToCreatePins.scheduleRepeating(2000);
+					timerToCreatePins.scheduleRepeating(500);
 			      } else {
 			    	  Window.alert("Could not retrieve data from DataSF, error:"+response.getStatusText()); 
 			      }
@@ -172,8 +171,10 @@ public class SFMovie implements EntryPoint {
             	    pin.addClickListener(h);
             	    hashtable.put(pin, ml);
                 } else {
-                	if(b==GeocoderStatus.OVER_QUERY_LIMIT) 
-                	System.out.println("OVER_QUERY_LIMIT: Could not translate "+ address);
+                	if(b==GeocoderStatus.OVER_QUERY_LIMIT) {
+                	//TODO Gracefully handle OVER_QUERY_LIMIT
+                	//System.out.println("OVER_QUERY_LIMIT: Could not translate "+ address);
+                	}
                 }
 			}      
         });
@@ -191,7 +192,7 @@ public class SFMovie implements EntryPoint {
      };
     public void createTenPins() {
     	int size = toBeTranslated.size();
-    	for(int i=0;i<5&&i<size; i++) {
+    	for(int i=0;i<8&&i<size; i++) {
 			final MovieLocation ml = toBeTranslated.pop();
 			if(ml.getAddress()==null) continue;
 			final String address = ml.getAddress()+",SF";
@@ -207,31 +208,45 @@ public class SFMovie implements EntryPoint {
 	 * This method update the markers in the map when user uses the   
 	 * filter
 	 * @param String
-	 * @param GoogleMap 
+	 * 
 	 */
 	private void updateMarkers(String text) {
 		int c = 0;
+		Marker p = null;
 		for(Marker pin: hashtable.keySet()) {
 			if(!match(hashtable.get(pin),text)) {
 				pin.setVisible(false);
 			} else {
 				c++;
 				pin.setVisible(true);
+				p=pin;
 			}
 		}
+		displayDetail(p);
 		resultPanel.clear();
 		resultPanel.add(new HTML("<h5>"+c+" pins marked in the map"));
 	}
+	/**
+	 * This method traverse the array and find the matched marker that user   
+	 * wants to filter
+	 * @param MovieLocation
+	 * @param String
+	 */
 	private boolean match(MovieLocation m, String text) {
 		if(m.getDirector().contains(text)||m.getWriter().contains(text)
 				||m.getActorList().contains(text)||m.getTitle().contains(text)||m.getYear().contains(text))
 			return true;
 		return false;
 	}
+	/**
+	 * This method displays all the markers/pins on the map   
+	 * when user click "DisplayAll" button
+	 */
 	private void disPlayAllMarkers() {
 		int c = 0;
 		for(Marker pin: hashtable.keySet()) {
 				pin.setVisible(true);
+				c++;
 		}
 		resultPanel.clear();
 		resultPanel.add(new HTML("<h5>All "+c+" pins marked in the map"));
@@ -243,12 +258,7 @@ public class SFMovie implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 		
-		
-		//Maps.loadMapsApi(mapAPIKey, "2", false, new Runnable() {  
-		//     public void run() {  
-		      // logic of building the map, goes here  
-		//     }  
-		//});
+
 		/**
 		 * Initialize the map that has movie locations marked
 		 */
@@ -264,21 +274,30 @@ public class SFMovie implements EntryPoint {
 	    widg.setSize("80%","80%");
 	    widg.addStyleName("center");
 	    theMap=GoogleMap.create( widg.getElement(), options );
-	    collectMovieLoactions(theMap);
+	    collectMovieLoactions();
 
 
-		/*
-		 * Create multiple value auto-complete text box
+		/**
+		 * Create multiple value auto-complete text box and the buttons
 		 */
 	    final SuggestBox filterBox = new SuggestBox(autoCompleteValues);
-	    final Button filterButton = new Button("GO");
+	    final Button filterButton = new Button("Filter");
 	    filterButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				updateMarkers(filterBox.getText());
 			}
 		});
-
+	    final Button displayAllButton = new Button("DisplayAll");
+	    displayAllButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				disPlayAllMarkers();
+			}
+		});
+	    /**
+		 * Create the detail panel to show movie information
+		 */
 		VerticalPanel detail = new VerticalPanel();
 		detail.add(new HTML("<h3>Movie Information</h3>"));
 		detail.add(movieAttrTable);
@@ -302,42 +321,25 @@ public class SFMovie implements EntryPoint {
 		};
 		movieAttrTable.addColumn(valueCol, "Value");
 		
-
-	    Grid grid = new Grid(2,2);
+		/**
+		 * Arrange the layout of all the widgets in the web app
+		 */
+	    Grid grid = new Grid(2,3);
 	    grid.setWidget(0, 0, filterBox);
 	    grid.setWidget(0, 1, filterButton);
+	    grid.setWidget(0, 2, displayAllButton);
 	    grid.setWidget(1, 0, resultPanel);
 	    grid.addStyleName("center");
 	    HTML foot = new HTML("<h4>Created by <a style='text-decoration:none;' href='mailto:juntaolee515@gmail.com'>Juntao Li</a>");
-
 	    DockLayoutPanel appLayout = new DockLayoutPanel(Unit.PCT);
-
 	    appLayout.addNorth(new HTML("<h1>SF Movie Shoot Locations</h1>"),15);
 	    appLayout.addNorth(new HTML("<h4>View Filter of movie title, director, writer, actor(actress) or release year"),5);
 	    appLayout.addNorth(grid,12);
 	    appLayout.addSouth(foot,5);
 	    appLayout.addWest(detail, 50);
-	    
 	    appLayout.add(widg);
-
-	    
-	    resultPanel.add(new HTML("<h5>Marking the movie locations in the map......"));
-	    //widg.getElement().getStyle().setMarginLeft(680, Unit.PX);
-	    //widg.getElement().getStyle().setMarginTop(550, Unit.PX);
-	    //p.setWidgetHorizontalPosition(widg, CENTER);
-	    //p.setWidgetRightWidth(nameField, 0, Unit.PCT, 50, Unit.PCT);
-	    //p.setWidgetRightWidth(widg, 0, Unit.PCT, 50, Unit.PCT);
-	    //RootPanel.get("nameFieldContainer").add(p);
-		RootLayoutPanel.get().add(appLayout);
-		//appLayout.setWidgetLeftRight(filterBox, 5, Unit.EM, 5, Unit.EM);     // Center panel
-		//appLayout.setWidgetTopBottom(filterBox, 5, Unit.EM, 5, Unit.EM);
-		//appLayout.setWidgetVerticalPosition(filterBox,Layout.Alignment.BEGIN);
-		//appLayout.setWidgetVerticalPosition(widg,Layout.Alignment.END);
-	    
-		
-
-		
-		
+	    resultPanel.add(new HTML("<h5>Loading the movie locations in the map......"));
+		RootLayoutPanel.get().add(appLayout);	
 	}
 
 }

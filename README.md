@@ -74,7 +74,7 @@ Key points
 
 Solution
 --------
-A [SF Movie](http://default-environment-vcifw3k78h.elasticbeanstalk.com) web application has been developed using Java and Google Web Toolkit to show where movies had been filmed on a map of San Francisco. It is hosted on AWS: http://default-environment-vcifw3k78h.elasticbeanstalk.com
+A [SF Movie](http://default-environment-vcifw3k78h.elasticbeanstalk.com) web application has been developed using Java and [Google Web Toolkit](http://www.gwtproject.org/) to show where movies had been filmed on a map of San Francisco. It is hosted on AWS: http://default-environment-vcifw3k78h.elasticbeanstalk.com
 
 This solution is mainly focused on front-end. To accomplish the key points of this problem, technical choices are listed as below.
 * Sent http request to the Socrata Open Data API (SODA) endpoint https://data.sfgov.org/resource/yitu-d5am.json and store the json data in a MovieLocation(extends JavaScriptObject) array
@@ -85,7 +85,12 @@ This solution is mainly focused on front-end. To accomplish the key points of th
 
 Trade-offs
 ----------
+* The application used a repeating scheduled timer on the client side send geocoder requests second by second due to the limit of this service, which affects the performance of initializing the markers on the map and makes user wait for the loading when first accessing the web app. Given more time, some back-end code will be written to cache all the data on the server-side or store them in a MySQL database
 * Will develop the automated tests for the app using gwt-test-utils framework if given more time
 * Tried using Backbone.js to write the front-end code but found it hard to learn it and implement the web service in one week. So a more familiar GWT is used in stead. Yet, some studies online indicates Backbone.js is indeed a good & easy-to-use JS framework
-* Since the geocoder service has request limit per second, a repeating scheduled timer has been implemented on the client side and process 8 requests per second, which affects the performance of initializing the markers on the map when first accessing the web app. Given more time, some back-end code will be written to cache all the data on the server-side or store them in a MySQL database
 * Only movie details are currently displayed when clicking the pin in the map. With additional time, other info like street view of that pin and movie poster can be added in the display
+
+Created By Juntao Li
+--------------------
+[Resume Link](https://drive.google.com/file/d/0B6JeZFJab_deX3k2Tk4ya1hVZWM/view?usp=sharing)
+[Linkedin Link](https://www.linkedin.com/profile/view?id=98496805&trk=nav_responsive_tab_profile)
