@@ -126,7 +126,7 @@ public class SFMovie implements EntryPoint {
 						//System.out.println("Added "+toBeTranslated.get(i).getAddress());
 					}
 					System.out.println(toBeTranslated.size()+" positions in total");
-					timerToCreatePins.scheduleRepeating(1000);
+					timerToCreatePins.scheduleRepeating(2000);
 			      } else {
 			    	  Window.alert("Could not retrieve data from DataSF, error:"+response.getStatusText()); 
 			      }
@@ -139,7 +139,7 @@ public class SFMovie implements EntryPoint {
 	}
 	/**
 	 * This method tries the translate the movie location to (lat,lng) pin 
-	 * in the map
+	 * in the map via geocoder service
 	 * @param theMap 
 	 */
 	private void markPinOnMap(final String address, final MovieLocation ml) {
@@ -191,7 +191,7 @@ public class SFMovie implements EntryPoint {
      };
     public void createTenPins() {
     	int size = toBeTranslated.size();
-    	for(int i=0;i<8&&i<size; i++) {
+    	for(int i=0;i<5&&i<size; i++) {
 			final MovieLocation ml = toBeTranslated.pop();
 			if(ml.getAddress()==null) continue;
 			final String address = ml.getAddress()+",SF";
